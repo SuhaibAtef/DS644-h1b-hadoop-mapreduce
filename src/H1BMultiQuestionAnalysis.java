@@ -28,7 +28,7 @@ import org.apache.hadoop.util.ToolRunner;
  *
  * Input: 2024 H-1B LCA CSV in DOL layout (96 columns).
  *
- * For each CERTIFIED, full-time (FULL_TIME_POSITION == 'Y') record:
+ * For each H-1B, CERTIFIED, full-time (FULL_TIME_POSITION == 'Y') record:
  *   - compute annual wage from WAGE_RATE_OF_PAY_* and WAGE_UNIT_OF_PAY
  *   - use TOTAL_WORKER_POSITIONS as worker count (default 1)
  *
@@ -50,6 +50,7 @@ public class H1BMultiQuestionAnalysis extends Configured implements Tool {
     // Column indices (0-based) from LCA_Record_Layout_FY2023 (96 columns).
     // These match the Kaggle H1B LCA Disclosure Data 2020–2024 layout.
     private static final int CASE_STATUS_INDEX            = 1;   // CASE_STATUS
+    private static final int VISA_CLASS_INDEX             = 5;   // VISA_CLASS
     private static final int SOC_CODE_INDEX               = 7;   // SOC_CODE
     private static final int SOC_TITLE_INDEX              = 8;   // SOC_TITLE
     private static final int FULL_TIME_POSITION_INDEX     = 9;   // FULL_TIME_POSITION
@@ -196,6 +197,12 @@ public class H1BMultiQuestionAnalysis extends Configured implements Tool {
             // Use approved cases only: CERTIFIED & CERTIFIED-WITHDRAWN
             if (!statusUpper.equals("CERTIFIED") &&
                 !statusUpper.equals("CERTIFIED-WITHDRAWN")) {
+                return;
+            }
+
+            // Exclude E-3 and H-1B1 cases present in the LCA disclosure file.
+            String visaClass = stripQuotes(fields[VISA_CLASS_INDEX]);
+            if (visaClass == null || !visaClass.equalsIgnoreCase("H-1B")) {
                 return;
             }
 
