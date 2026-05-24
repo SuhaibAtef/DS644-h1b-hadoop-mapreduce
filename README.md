@@ -23,7 +23,7 @@ The MapReduce job produces aggregates that allow us to answer:
 
 ## MapReduce Job Design
 
-The main driver class is `H1BMultiQuestionAnalysis` (in `src/`). For each certified, full‑time 2024 LCA record, the mapper:
+The main driver class is `H1BMultiQuestionAnalysis` (in `src/`). For each certified, full-time `H-1B` 2024 LCA record, the mapper:
 
 - Parses the DOL CSV layout (96 columns).
 - Computes an **annual wage** per worker from `WAGE_RATE_OF_PAY_*` and `WAGE_UNIT_OF_PAY`.
